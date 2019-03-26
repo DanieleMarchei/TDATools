@@ -1,84 +1,99 @@
+from TDA.slidingWindow import slidingWindow
 import numpy as np
-from ripser import ripser, plot_dgms
-
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib import widgets
-from mpl_toolkits.mplot3d import Axes3D
-
 from sklearn.decomposition import PCA
-
-from slidingWindow import slidingWindow
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.widgets import Slider, TextBox, Button
+import math
 
 # Step 1: Setup the signal
 T = 40 # The period in number of samples
 NPeriods = 4 # How many periods to go through
 N = T*NPeriods #The total number of samples
 t = np.linspace(0, 2*np.pi*NPeriods, N+1)[:N] # Sampling indices in time
-x = np.cos(t) # The final signal
 
-def on_value_change(change):
-    execute_computation()
+x = np.sin(t) + np.cos(3 * t) # The final signal
+noise = np.random.rand(N)
+#x += noise
 
-ax = plt.axes([0.1, 0.2, 0.8, 0.05])
+sld_dim, sld_tau, sld_dt = None, None, None
+txt_eig = None
+first = True
+ax1, ax2 = None, None
 
-dimslider = widgets.Slider(ax, "Dimension", valmin=1, valmax=40, valinit=20)
-dimslider.on_changed(on_value_change)
+def bestDimension():
+    f = open("SW-bestDimension3D.csv", "w+")
+    f.write("dim,tau,score")
+    for d in range(3, 100):
+        for t in range(1, 40):
+            X = slidingWindow(x, d, t * 0.05, sld_dt.val)
+            pca = PCA(n_components = 3)
+            pca.fit_transform(X)
+            
+            eig1, eig2 = pca.explained_variance_[0], pca.explained_variance_[2]
+            if eig2 <= 0.0001:
+                eig2 = pca.explained_variance_[1]
+            dist = eig1 - eig2
+            f.write(str(d) + "," + str(t) + "," + str(dist) + "\n")
 
-ax = plt.axes([0.1, 0.1, 0.8, 0.05])
+def plot(val):
 
-Tauslider = widgets.Slider(ax,r'\(\tau :\)' ,valmin=0.1,valmax=5,valstep=0.1,valinit=1)
-Tauslider.on_changed(on_value_change)
+    global first, sld_dim, sld_tau, sld_dt, ax1, ax2, txt_eig
+    if not first:
+        ax1.clear()
+        ax2.clear()
+        
+    #if first:
+        #bestDimension()
 
-ax = plt.axes([0.1, 0, 0.8, 0.05])
+    first = False
 
-dTslider = widgets.Slider(ax, "dt", valmin=0.1, valmax=5, valstep=0.1, valinit=0.5)
-dTslider.on_changed(on_value_change)
+    ax1 = plt.subplot(221)
+    ax1.set_title("Time Serie")
+    ax1.plot(x)
 
-
-plt.figure(figsize=(9.5, 3))
-
-def execute_computation():
-    plt.clf()
-    # Step 1: Setup the signal again in case x was lost
-    T = 40 # The period in number of samples
-    NPeriods = 4 # How many periods to go through
-    N = T*NPeriods # The total number of samples
-    t = np.linspace(0, 2*np.pi*NPeriods, N+1)[0:N] # Sampling indices in time
-    x = np.cos(t)  # The final signal
-    
-    # Get slider values
-    dim = dimslider.val
-    Tau = Tauslider.val
-    dT = dTslider.val
-    
-    #Step 2: Do a sliding window embedding
-    X = slidingWindow(x, dim, Tau, dT)
-    extent = Tau*dim
-
-    #Step 3: Perform PCA down to 2D for visualization
-    pca = PCA(n_components = 2)
-    Y = pca.fit_transform(X)
-    eigs = pca.explained_variance_
-    print("lambda1 = %g, lambda2 = %g"%(eigs[0], eigs[1]))
-
-    #Step 4: Plot original signal and PCA of the embedding
-
-    ax = plt.subplot(121)
-    ax.plot(x)
-    ax.set_ylim((-2*max(x), 2*max(x)))
-    ax.set_title("Original Signal")
-    ax.set_xlabel("Sample Number")
+    X = slidingWindow(x, int(sld_dim.val), sld_tau.val, sld_dt.val)
+    extent = int(sld_dim.val * sld_tau.val)
     yr = np.max(x)-np.min(x)
     yr = [np.min(x)-0.1*yr, np.max(x)+0.1*yr]
-    ax.plot([extent, extent], yr, 'r')
-    ax.plot([0, 0], yr, 'r')     
-    ax.plot([0, extent], [yr[0]]*2, 'r')
-    ax.plot([0, extent], [yr[1]]*2, 'r')
-    ax2 = plt.subplot(122)
-    ax2.set_title("PCA of Sliding Window Embedding")
-    ax2.scatter(Y[:, 0], Y[:, 1])
-    ax2.set_aspect('equal', 'datalim')
-    plt.plot()
+    ax1.plot([extent, extent], yr, 'r')
+    ax1.plot([0, 0], yr, 'r')     
+    ax1.plot([0, extent], [yr[0]]*2, 'r')
+    ax1.plot([0, extent], [yr[1]]*2, 'r')
+
+    pca = PCA(n_components = 3)
+    Y = pca.fit_transform(X)
+    eig = []
+    for e in pca.explained_variance_:
+        eig.append(round(e, 3))
     
-execute_computation()
+    portion = round(sum(pca.explained_variance_ratio_) * 100,3)
+    txt_eig.set_val(str(eig) + " ~ " + str(portion) + "%")
+
+    ax2 = plt.subplot(222, projection='3d')
+    ax2.set_title("3PCA sliding window")
+    ax2.scatter(Y[:,0], Y[:,1], Y[:,2])
+
+    plt.tight_layout()
+    plt.show()
+
+ax_dim = plt.axes([0.1, 0.3, 0.8, 0.05])
+sld_dim = Slider(ax_dim, "Dimension", 5, 100, valinit=20, valstep=1)
+sld_dim.on_changed(plot)
+
+ax_tau = plt.axes([0.1, 0.2, 0.8, 0.05])
+sld_tau = Slider(ax_tau, "Tau", 0, 2, valinit=1, valstep=0.05)
+sld_tau.on_changed(plot)
+
+ax_dt = plt.axes([0.1, 0.1, 0.8, 0.05])
+sld_dt = Slider(ax_dt, "dT", 0.1, 2, valinit=0.5, valstep=0.05)
+sld_dt.on_changed(plot)
+
+ax_eig = plt.axes([0.4, 0.4, 0.5, 0.05])
+txt_eig = TextBox(ax_eig, "Explained variances")
+
+ax_bestDim = plt.axes([0.8, 0.01, 0.1, 0.075])
+btn_bestDim = Button(ax_bestDim, "Best Dimension")
+btn_bestDim.on_clicked(lambda x : bestDimension())
+
+plot(None)

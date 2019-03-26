@@ -2,7 +2,7 @@ from ripser import ripser, plot_dgms
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
-from persentropy import persentropy
+from TDA.persentropy import persentropy
 
 script, fileName = sys.argv
 
