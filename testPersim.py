@@ -36,21 +36,21 @@ def generate(val = None):
     plt.clf()
     global dgms, sld_resolution, sld_spread, bgen, old_resolution, old_spread, bgennoise
     N_noise = 150
-    N_circle1 = 200
+    N_circle1 = 0 #200
     N_circle2 = 150
     N = N_noise + N_circle1 + N_circle2
 
     if val != None:
-        data = np.random.random((N,2))
+        data = 150 * np.random.random((N,2))
     else:
         data = np.concatenate([150 * np.random.random((N_noise,2)),
-                        np.random.randint(10,100) + 10 * datasets.make_circles(n_samples=N_circle1, factor=0.99)[0],
+                        #np.random.randint(10,100) + 10 * datasets.make_circles(n_samples=N_circle1, factor=0.99)[0],
                         np.random.randint(10,100) + 20 * datasets.make_circles(n_samples=N_circle2, factor=0.99)[0]])
 
-    if argv[1] != None:
+    if len(argv) > 1:
         data = np.genfromtxt(argv[1], delimiter = ",")
 
-    dgms = ripser(data, maxdim = 2)["dgms"]
+    dgms = ripser(data)["dgms"]
     plt.subplot(231)
     plt.scatter(data[:,0], data[:,1], s=4)
     plt.title("Scatter plot N = " + str(N))
