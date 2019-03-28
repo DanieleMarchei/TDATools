@@ -10,7 +10,7 @@ print("Generating circles")
 data = None
 pim = PersImage(spread=1, pixels=[10,10], verbose=False)
 
-for i in range(100):
+for i in range(500):
     if i % 10 != 0:
         print(str(i), end = " ")
     else:
@@ -33,7 +33,7 @@ for i in range(100):
 
 print("\nGenerating noise")
 f = None
-for i in range(100):
+for i in range(500):
     if i != 0 and i % 10 == 0:
         print(str(i))
     else:
