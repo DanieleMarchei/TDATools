@@ -2,30 +2,28 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from numpy import linalg as LA
+import TDA.matrixDistance as md
 
-A = np.matrix([[1,2],[3,4]])
-B = np.matrix([[42,-2],[34,5]])
-M = A - B
-iters = 100
+A = np.matrix([[1,2],
+               [3,4]])
 
-X = np.zeros((iters, 3))
+B = np.matrix([[3,5],
+               [6,7]])
 
-maxPoint = (0, 0, -1000)
+print("Frobenius:", end = " ")
+print(md.frobenius(A,B))
 
-for i in range(iters):
-    s = np.sin(i)
-    c = np.cos(i)
-    arr = np.array([[s],[c]])
-    X[i,0] = s
-    X[i,1] = c
-    X[i,2] = LA.norm(M * arr)
-    if X[i,2] > maxPoint[2]:
-        maxPoint = (s,c,X[i,2])
+print("Manhattan:", end = " ")
+print(md.manhattan(A,B))
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.set_xlabel("sin")
-ax.set_ylabel("cos")
-ax.scatter(X[:,0],X[:,1],X[:,2])
-print(maxPoint)
-plt.show()
+print("Euclidian:", end = " ")
+print(md.euclidian(A,B))
+
+print("Chebyshev:", end = " ")
+print(md.chebyshev(A,B))
+
+print("       dn:", end = " ")
+print(md.dn(A,B))
+
+print("       df:", end = " ")
+print(md.df(A,B))

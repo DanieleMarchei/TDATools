@@ -2,7 +2,7 @@ import numpy as np
 from numpy import linalg as LA
 
 def matrixTrace(A):
-    assert(A.shape[0] == A.shape(1))
+    assert(A.shape[0] == A.shape[1])
 
     n = A.shape[0]
     sumDiagonal = 0
@@ -12,7 +12,7 @@ def matrixTrace(A):
     return sumDiagonal
 
 def fnorm(A):
-    assert(A.shape[0] == A.shape(1))
+    assert(A.shape[0] == A.shape[1])
 
     n = A.shape[0]
     totalSum = 0
@@ -29,7 +29,7 @@ def frobenius(A, B):
     trace = matrixTrace(inner)
     return np.sqrt(trace)
 
-def d1(A, B):
+def manhattan(A, B):
     assert(A.shape == B.shape)
 
     n = A.shape[0]
@@ -39,8 +39,10 @@ def d1(A, B):
     for i in range(n):
         for j in range(n):
             finalSum += np.abs(A[i,j] - B[i,j])
+    
+    return finalSum
 
-def d2(A, B):
+def euclidian(A, B):
     assert(A.shape == B.shape)
 
     n = A.shape[0]
@@ -53,7 +55,7 @@ def d2(A, B):
 
     return np.sqrt(finalSum)
 
-def dinf(A, B):
+def chebyshev(A, B):
     assert(A.shape == B.shape)
 
     n = A.shape[0]
@@ -66,20 +68,25 @@ def dinf(A, B):
     
     return np.max(maxs)
 
-def dn(A, B, iterations = 50):
-    raise NotImplementedError("Sill don't know how to do it in n dimensions")
+def dn(A, B, iterations = 500):
     assert(A.shape == B.shape)
 
     n = A.shape[0]
+    M = A - B
 
-    iters = []
+    maxDist = -1
     for i in range(iterations):
-        s = np.sin(i)
-        c = np.cos(i)
-        arr = np.array([[s],[c]])
-        iters.append(LA.norm(arr))
-    
-    return np.max(iters)
+        arr = []
+        for j in range(n):
+            arr.append([np.random.randint(-1000, 1000)])
+        arr = np.array(arr)
+        norm = LA.norm(arr)
+        unit_arr = arr / norm
+        d = LA.norm(M * unit_arr)
+        if d > maxDist:
+            maxDist = d
+
+    return maxDist
 
 def df(A, B):
     assert(A.shape == B.shape)
