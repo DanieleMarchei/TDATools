@@ -2,7 +2,7 @@ import numpy as np
 from numpy import linalg as LA
 
 def matrixTrace(A):
-    assert(A.shape[0] == A.shape[1])
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
 
     n = A.shape[0]
     sumDiagonal = 0
@@ -12,7 +12,7 @@ def matrixTrace(A):
     return sumDiagonal
 
 def fnorm(A):
-    assert(A.shape[0] == A.shape[1])
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
 
     n = A.shape[0]
     totalSum = 0
@@ -23,14 +23,18 @@ def fnorm(A):
 
 
 def frobenius(A, B):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape , "Matrices have not the same shape"
 
     inner = (A - B) * ((A - B).conj().T)
     trace = matrixTrace(inner)
     return np.sqrt(trace)
 
 def manhattan(A, B):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape
 
     n = A.shape[0]
 
@@ -43,7 +47,9 @@ def manhattan(A, B):
     return finalSum
 
 def euclidian(A, B):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape , "Matrices have not the same shape"
 
     n = A.shape[0]
 
@@ -56,7 +62,9 @@ def euclidian(A, B):
     return np.sqrt(finalSum)
 
 def chebyshev(A, B):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape , "Matrices have not the same shape"
 
     n = A.shape[0]
 
@@ -69,7 +77,9 @@ def chebyshev(A, B):
     return np.max(maxs)
 
 def dn(A, B, iterations = 500):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape , "Matrices have not the same shape"
 
     n = A.shape[0]
     M = A - B
@@ -89,6 +99,8 @@ def dn(A, B, iterations = 500):
     return maxDist
 
 def df(A, B):
-    assert(A.shape == B.shape)
+    assert A.shape[0] == A.shape[1] , "Matrix is not square"
+    assert B.shape[0] == B.shape[1] , "Matrix is not square"
+    assert A.shape == B.shape , "Matrices have not the same shape"
 
     return np.abs(fnorm(A) - fnorm(B))

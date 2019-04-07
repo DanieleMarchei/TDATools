@@ -4,11 +4,9 @@ import numpy as np
 from numpy import linalg as LA
 import TDA.matrixDistance as md
 
-A = np.matrix([[1,2],
-               [3,4]])
+A = np.matrix([[1, 2], [3, 4]])
 
-B = np.matrix([[3,5],
-               [6,7]])
+B = np.matrix([[4, 5], [5, 7]])
 
 print("Frobenius:", end = " ")
 print(md.frobenius(A,B))
