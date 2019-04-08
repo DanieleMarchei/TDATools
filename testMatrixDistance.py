@@ -6,7 +6,7 @@ import TDA.matrixDistance as md
 
 A = np.matrix([[1, 2], [3, 4]])
 
-B = np.matrix([[4, 5], [5, 7]])
+B = np.matrix([[-1, 4], [3, -4]])
 
 print("Frobenius:", end = " ")
 print(md.frobenius(A,B))

@@ -35,16 +35,8 @@ def manhattan(A, B):
     assert A.shape[0] == A.shape[1] , "Matrix is not square"
     assert B.shape[0] == B.shape[1] , "Matrix is not square"
     assert A.shape == B.shape
-
-    n = A.shape[0]
-
-    finalSum = 0
-
-    for i in range(n):
-        for j in range(n):
-            finalSum += np.abs(A[i,j] - B[i,j])
-    
-    return finalSum
+   
+    return np.sum(np.abs(A-B))
 
 def euclidian(A, B):
     assert A.shape[0] == A.shape[1] , "Matrix is not square"
