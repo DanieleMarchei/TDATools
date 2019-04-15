@@ -53,6 +53,7 @@ def plot(val):
     ax1.plot(x)
 
     X = slidingWindow(x, int(sld_dim.val), sld_tau.val, sld_dt.val)
+    print(X.shape)
     extent = int(sld_dim.val * sld_tau.val)
     yr = np.max(x)-np.min(x)
     yr = [np.min(x)-0.1*yr, np.max(x)+0.1*yr]

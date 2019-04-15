@@ -8,16 +8,26 @@ t = np.arange(N) #Time indices
 
 #Make the harmonic signal cos(t) + cos(3t)
 xH = np.cos(2*np.pi*(1.0/T)*t) + np.cos(2*np.pi*(1.0/(3*T)*t))
-                                        
-#Make the incommensurate signal cos(t) + cos(pi*t)
-xNC = np.cos(2*np.pi*(1.0/T)*t) + np.cos(2*np.pi*(1.0/(np.pi*T)*t))
 
-plt.figure()
+fig = plt.figure()
+#axFunction = fig.add_subplot(211)
+#axFunction.plot(xH)
+
+
 P1 = np.abs(np.fft.fft(xH))**2
-P2 = np.abs(np.fft.fft(xNC))**2
-plt.plot(np.arange(len(P1)), P1)
-plt.plot(np.arange(len(P2)), P2)
-plt.xlabel("Frequency Index")
-plt.legend({"Harmonic", "Noncommensurate"})
-plt.xlim([0, 50])
+#axFFT = fig.add_subplot(212)
+#axFFT.plot(np.arange(len(P1)), P1)
+#axFFT.set_xlim([0, 100])
+
+
+axFunction = fig.add_subplot(211)
+P1[15:100] = [0] * (100-15)
+P1[560:] = [0] * len(P1[560:])
+invFFT = np.fft.ifft(P1)
+axFunction.plot(invFFT)
+
+
+axFFT = fig.add_subplot(212)
+axFFT.plot(np.arange(len(P1)), P1)
+#axFFT.set_xlim([0, 100])
 plt.show()
