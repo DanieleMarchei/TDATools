@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.interpolate as interp
 from sklearn.decomposition import PCA
+import scipy
 def slidingWindow(x, dim, Tau, dT):
     '''
     Performes the sliding window on a single one dimensional signal.
